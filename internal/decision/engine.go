@@ -568,6 +568,8 @@ func (e *Engine) Peers() []peer.ID {
 	return response
 }
 
+type PeerBlockPolicy func(p peer.ID, c cid.Cid) bool
+
 // MessageReceived is called when a message is received from a remote peer.
 // For each item in the wantlist, add a want-have or want-block entry to the
 // request queue (this is later popped off by the workerTasks)
@@ -647,8 +649,15 @@ func (e *Engine) MessageReceived(ctx context.Context, p peer.ID, m bsmsg.BitSwap
 		// Add each want-have / want-block to the ledger
 		l.Wants(c, entry.Priority, entry.WantType)
 
-		// If the block was not found
-		if !found {
+		// Check if the peer is allowed
+		var peerBlockPolicy PeerBlockPolicy // TODO: how to pass this value around.
+		passPolicy := true
+		if peerBlockPolicy != nil {
+			passPolicy = peerBlockPolicy(p, c)
+		}
+
+		// If the block was not found or the peer doesn't pass the policy
+		if !found || !passPolicy {
 			log.Debugw("Bitswap engine: block not found", "local", e.self, "from", p, "cid", entry.Cid, "sendDontHave", entry.SendDontHave)
 
 			// Only add the task to the queue if the requester wants a DONT_HAVE
