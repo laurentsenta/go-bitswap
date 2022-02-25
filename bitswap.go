@@ -156,6 +156,7 @@ func WithTargetMessageSize(tms int) Option {
 
 type TaskInfo = decision.TaskInfo
 type TaskComparator = decision.TaskComparator
+type PeerBlockRequestFilter = decision.PeerBlockRequestFilter
 
 // WithTaskComparator configures custom task prioritization logic.
 func WithTaskComparator(comparator TaskComparator) Option {
@@ -291,6 +292,7 @@ func New(parent context.Context, network bsnet.BitSwapNetwork,
 		activeBlocksGauge,
 		decision.WithTaskComparator(bs.taskComparator),
 		decision.WithTargetMessageSize(bs.engineTargetMessageSize),
+		decision.WithPeerBlockRequestFilter(bs.peerBlockRequestFilter),
 	)
 	bs.engine.SetSendDontHaves(bs.engineSetSendDontHaves)
 
@@ -399,6 +401,9 @@ type Bitswap struct {
 	simulateDontHavesOnTimeout bool
 
 	taskComparator TaskComparator
+
+	// an optional feature to accept / deny HAVE - DONT HAVE requests
+	peerBlockRequestFilter PeerBlockRequestFilter
 }
 
 type counters struct {
