@@ -9,11 +9,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu", "windows", "macos" ]
+        os: [ "macos" ]
         go: [ "1.16.x", "1.17.x" ]
     env:
       COVERAGES: ""
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: self-hosted
     name: ${{ matrix.os}} (go ${{ matrix.go }})
     steps:
       - uses: actions/checkout@v2
