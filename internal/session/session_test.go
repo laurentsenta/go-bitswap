@@ -430,7 +430,13 @@ func TestSessionFailingToGetFirstBlock(t *testing.T) {
 	select {
 	case receivedWantReq := <-fpm.wantReqs:
 		if len(receivedWantReq.cids) < len(cids) {
-			t.Fatal("did not rebroadcast whole live list")
+			// TODO: this is where the test failed. https://github.com/ipfs/go-bitswap/runs/5339832521?check_suite_focus=true
+			t.Log("did not rebroadcast whole live list")
+			// Drain the wantReqs channel
+			for req := range fpm.wantReqs {
+				t.Logf("%v - %v", req.cids, startTick)
+			}
+			t.FailNow()
 		}
 	case <-ctx.Done():
 		t.Fatal("Never rebroadcast want list")
