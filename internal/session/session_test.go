@@ -445,6 +445,7 @@ func TestSessionFailingToGetFirstBlock(t *testing.T) {
 	// Tick should take longer
 	consecutiveTickLength := time.Since(startTick)
 	if firstTickLength > consecutiveTickLength {
+		t.Logf("%v - %v", firstTickLength, consecutiveTickLength)
 		t.Fatal("Should have increased tick length after first consecutive tick")
 	}
 
@@ -468,6 +469,7 @@ func TestSessionFailingToGetFirstBlock(t *testing.T) {
 	// Tick should take longer
 	secondConsecutiveTickLength := time.Since(startTick)
 	if consecutiveTickLength > secondConsecutiveTickLength {
+		t.Logf("%v - %v - %v", firstTickLength, consecutiveTickLength, secondConsecutiveTickLength)
 		t.Fatal("Should have increased tick length after first consecutive tick")
 	}
 
